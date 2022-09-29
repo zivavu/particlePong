@@ -10,3 +10,15 @@
     top: 0;
     left: 0;
 }
+#score-display {
+    position: absolute;
+    width: 20vw;
+    height: 10vh;
+    top: 10vh;
+    left: 40vw;
+    line-height: 10vh;
+    font-size: 10vh;
+    color: rgba(255, 255, 255, 0.301);
+    text-align: center;
+    letter-spacing: 7vw;
+}

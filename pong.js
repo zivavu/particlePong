@@ -1,13 +1,17 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
+const scoreDisplay = document.getElementById('score-display');
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
 
 window.onresize = resizeCanvas;
 function resizeCanvas() {
     canvas.height = window.innerHeight;
     canvas.width = window.innerWidth;
+    player1.setPaddlePosition(60);
+    player2.setPaddlePosition(canvas.width - 80);
+    draw();
 }
-resizeCanvas();
-
 class Ball {
     constructor() {
         this.position = {
@@ -15,7 +19,8 @@ class Ball {
             y: canvas.height / 2,
         };
         this.diameter = 35;
-        this.velocity = 7;
+        this.centerX = this.position.x + this.diameter / 2;
+        this.velocity = 13;
         this.direction = {
             x: -1,
             y: Math.random() * 0.8 - 0.4,
@@ -29,6 +34,7 @@ class Ball {
 
     update() {
         this.checkColision();
+        this.centerX = this.position.x + this.diameter / 2;
         this.position.x += this.direction.x * this.velocity;
         this.position.y += this.direction.y * this.velocity;
     }
@@ -49,20 +55,31 @@ class Ball {
         ) {
             this.direction.x = -1;
         }
-        if (this.position.y <= 0 || this.position.y + this.diameter >= canvas.height) this.direction.y = -this.direction.y;
+        if (this.position.y <= 0 || this.position.y + this.diameter >= canvas.height) {
+            this.direction.y = -this.direction.y;
+        }
+    }
+    checkWin() {
+        if (this.position.x <= 0 || this.position.x >= canvas.width) {
+            if (this.direction.x > 0) player1.score++;
+            else player2.score++;
+            ball = new Ball();
+            updateScore();
+        }
     }
 }
-const ball = new Ball();
+let ball = new Ball();
 
 class Player {
     constructor() {
         this.paddle = {
             width: 40,
             height: 200,
-            velocity: 10,
+            velocity: 20,
             bounceMultiplier: 1.1,
             y: canvas.height / 2,
         };
+        this.score = 0;
     }
 
     setPaddlePosition(paddlePosition) {
@@ -99,12 +116,10 @@ playersInit();
 function playersInit() {
     player1.setSteering('w', 's');
     player1.setPaddlePosition(60);
-    player1.drawPaddle();
 
     player2.setSteering('ArrowUp', 'ArrowDown');
     player2.setPaddlePosition(canvas.width - 80);
-    player2.drawPaddle();
-
+    draw();
     setInterval(gameFrame, 60 / 1000);
 }
 
@@ -114,8 +129,9 @@ document.onkeydown = onkeyup = function (e) {
     keyMap[e.key] = e.type == 'keydown';
 };
 function gameFrame() {
-    ball.update();
     checkPaddleMovement();
+    ball.update();
+    ball.checkWin();
     draw();
 }
 
@@ -132,4 +148,8 @@ function draw() {
     player1.drawPaddle();
     player2.drawPaddle();
     ball.draw();
+}
+
+function updateScore() {
+    scoreDisplay.textContent = `${player1.score}:${player2.score}`;
 }
