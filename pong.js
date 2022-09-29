@@ -8,36 +8,56 @@ function resizeCanvas() {
 }
 resizeCanvas();
 
-const ball = {
-    position: {
-        x: canvas.width / 2,
-        y: canvas.height / 2,
-    },
-
-    diameter: 20,
-    velocity: 10,
-    direction: {
-        x: 1,
-        y: Math.random() * 0.8 - 0.4,
-    },
+class Ball {
+    constructor() {
+        this.position = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+        };
+        this.diameter = 35;
+        this.velocity = 7;
+        this.direction = {
+            x: -1,
+            y: Math.random() * 0.8 - 0.4,
+        };
+    }
 
     draw() {
         ctx.fillStyle = 'white';
-        ctx.beginPath();
-        ctx.arc(this.position.x, this.position.y, this.diameter, 0, Math.PI * 2);
-        ctx.fill();
-    },
+        ctx.fillRect(this.position.x, this.position.y, this.diameter, this.diameter);
+    }
 
     update() {
+        this.checkColision();
         this.position.x += this.direction.x * this.velocity;
         this.position.y += this.direction.y * this.velocity;
-    },
-};
+    }
+    checkColision() {
+        if (
+            player1.paddle.x >= this.position.x - player1.paddle.width / 2 &&
+            player1.paddle.x <= this.position.x &&
+            player1.paddle.y <= this.position.y + this.diameter &&
+            player1.paddle.y + player1.paddle.height >= this.position.y
+        ) {
+            this.direction.x = 1;
+        }
+        if (
+            player2.paddle.x <= this.position.x + this.diameter &&
+            player2.paddle.x >= this.position.x &&
+            player2.paddle.y <= this.position.y + this.diameter &&
+            player2.paddle.y + player2.paddle.height >= this.position.y
+        ) {
+            this.direction.x = -1;
+        }
+        if (this.position.y <= 0 || this.position.y + this.diameter >= canvas.height) this.direction.y = -this.direction.y;
+    }
+}
+const ball = new Ball();
 
 class Player {
     constructor() {
         this.paddle = {
-            width: 20,
+            width: 40,
             height: 200,
             velocity: 10,
             bounceMultiplier: 1.1,
@@ -68,12 +88,13 @@ class Player {
     }
     drawPaddle() {
         ctx.fillStyle = 'white';
-        ctx.fillRect(this.paddle.x, this.paddle.y, this.paddle.width, this.paddle.height);
+        ctx.fillRect(this.paddle.x, this.paddle.y, this.paddle.width / 2, this.paddle.height);
     }
 }
 
 const player1 = new Player();
 const player2 = new Player();
+const players = [player1, player2];
 playersInit();
 function playersInit() {
     player1.setSteering('w', 's');
