@@ -20,10 +20,10 @@ class Ball {
         };
         this.diameter = 35;
         this.centerY = this.position.y + this.diameter / 2;
-        this.velocity = 20;
+        this.velocity = 17;
         this.direction = {
             x: Math.random() > 0.5 ? 1 : -1,
-            y: Math.random() * 0.8 - 0.4,
+            y: Math.random() * 0.4 - 0.2,
         };
     }
 
@@ -40,13 +40,14 @@ class Ball {
     }
     checkColision() {
         if (
-            player1.paddle.x >= this.position.x - player1.paddle.width / 2 &&
-            player1.paddle.x <= this.position.x &&
+            player1.paddle.x + player1.paddle.width / 2 >= this.position.x &&
+            player1.paddle.x <= this.position.x + this.diameter &&
             player1.paddle.y <= this.position.y + this.diameter &&
             player1.paddle.y + player1.paddle.height >= this.position.y
         ) {
             this.direction.x = 1;
             this.direction.y = -(player1.paddle.y - this.centerY + player1.paddle.height / 2) / player1.paddle.height;
+            hitParticles();
         }
 
         if (
@@ -57,23 +58,26 @@ class Ball {
         ) {
             this.direction.x = -1;
             this.direction.y = -(player2.paddle.y - this.centerY + player2.paddle.height / 2) / player2.paddle.height;
+            hitParticles();
         }
 
         if (this.position.y <= 0 || this.position.y + this.diameter >= canvas.height) {
             this.direction.y = -this.direction.y;
+            hitParticles();
         }
     }
     checkWin() {
         if (this.position.x <= 0 || this.position.x >= canvas.width) {
             if (this.direction.x > 0) player1.score++;
             else player2.score++;
-            // ball = new Ball();
-            particleArr = [];
+            ball = new Ball();
+            trailParticlesArr = [];
             updateScore();
         }
     }
 }
-let particleArr = [];
+let trailPartilcesLimit = 150;
+let trailParticlesArr = [];
 class TrailParticle {
     constructor() {
         this.position = {
@@ -85,7 +89,7 @@ class TrailParticle {
         this.velocity = Math.random() * 10 + 5;
         this.direction = {
             x: -ball.direction.x,
-            y: Math.random() * -ball.direction.y - ball.direction.y / 2,
+            y: Math.random() * (-ball.direction.y - ball.direction.y / 2) * 2,
         };
     }
     update() {
@@ -99,6 +103,42 @@ class TrailParticle {
         ctx.fillRect(this.position.x, this.position.y, this.diameter, this.diameter);
     }
 }
+
+let hitParticlesLimit = 40;
+let hitParticlesArr = [];
+class HitParticle {
+    constructor() {
+        this.position = {
+            x: ball.position.x + Math.random() * ball.diameter,
+            y: ball.position.y + Math.random() * ball.diameter,
+        };
+        this.diameter = Math.random() * 8 + 3;
+        this.opacity = 80;
+        this.velocity = Math.random() * 10 + 5;
+        this.direction = {
+            x: Math.random() * 4 - 2,
+            y: Math.random() * 4 - 2,
+        };
+        console.log(this.direction);
+    }
+    update() {
+        this.diameter *= 1.05;
+        this.opacity *= 0.95;
+        this.position.x += this.direction.x * this.velocity;
+        this.position.y += this.direction.y * this.velocity;
+    }
+    draw() {
+        ctx.fillStyle = `rgba(255,255,255, ${this.opacity}%)`;
+        ctx.fillRect(this.position.x, this.position.y, this.diameter, this.diameter);
+    }
+}
+
+function hitParticles() {
+    for (let i = 0; i < 20; i++) {
+        hitParticlesArr.push(new HitParticle());
+    }
+}
+
 let ball = new Ball();
 
 class Player {
@@ -106,7 +146,7 @@ class Player {
         this.paddle = {
             width: 40,
             height: 200,
-            velocity: 20,
+            speed: 13,
             bounceMultiplier: 1.1,
             y: canvas.height / 2,
             charge: 0,
@@ -135,7 +175,7 @@ class Player {
         this.charegeDirection = -this.bounceDirection;
     }
     movePaddle(direction) {
-        this.paddle.origin.y += direction * this.paddle.velocity;
+        this.paddle.origin.y += direction * this.paddle.speed;
 
         if (this.paddle.origin.y <= 0) {
             this.paddle.origin.y = 0;
@@ -199,7 +239,7 @@ function gameFrame() {
     checkPaddleMovement();
     ball.update();
     ball.checkWin();
-    particleArr.push(new TrailParticle());
+    trailParticlesArr.push(new TrailParticle());
     draw();
 }
 
@@ -221,8 +261,17 @@ function draw() {
     player1.drawPaddle();
     player2.drawPaddle();
     ball.draw();
-    particleArr.forEach((particle, i) => {
-        if (particle.opacity < 0.1) particleArr.shift();
+    particleHandler();
+}
+
+function particleHandler() {
+    if (trailParticlesArr.length > trailPartilcesLimit) trailParticlesArr.shift();
+    trailParticlesArr.forEach((particle) => {
+        particle.update();
+        particle.draw();
+    });
+    if (hitParticlesArr.length > hitParticlesLimit) hitParticlesArr.shift();
+    hitParticlesArr.forEach((particle) => {
         particle.update();
         particle.draw();
     });
