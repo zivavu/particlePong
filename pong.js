@@ -82,53 +82,59 @@ class Player {
             velocity: 20,
             bounceMultiplier: 1.1,
             y: canvas.height / 2,
+            charge: 0,
         };
         this.score = 0;
-        this.charge = 0;
     }
 
     setPaddleX(paddlePosition) {
         this.paddle.x = paddlePosition;
-    }
-
-    setSteering(up, down, charge) {
-        this.steering = {
-            up: up,
-            down: down,
-            charge: charge,
-        };
-    }
-    movePaddle(direction) {
-        this.paddle.y += direction * this.paddle.velocity;
-
         this.paddle.origin = {
             x: this.paddle.x,
             y: this.paddle.y,
         };
+    }
 
-        if (this.paddle.y <= 0) {
-            this.paddle.y = 0;
+    setSteering(up, down, chargeButton) {
+        this.steering = {
+            up: up,
+            down: down,
+            chargeButton: chargeButton,
+        };
+    }
+    movePaddle(direction) {
+        this.paddle.origin.y += direction * this.paddle.velocity;
+
+        if (this.paddle.origin.y <= 0) {
+            this.paddle.origin.y = 0;
             return;
         }
-        if (this.paddle.y >= canvas.height - this.paddle.height) {
-            this.paddle.y = canvas.height - this.paddle.height;
+        if (this.paddle.origin.y >= canvas.height - this.paddle.height) {
+            this.paddle.origin.y = canvas.height - this.paddle.height;
             return;
         }
+        this.paddle.y = this.paddle.origin.y;
     }
     startChargeAccumulating() {
-        if (this.charge > 0) return;
-        this.chargeInterval = setInterval(addCharge, gameTicks);
+        if (this.paddle.charge > 0) return;
+        this.paddle.charge++;
+        let me = this;
+        this.chargeInterval = setInterval(function () {
+            me.addCharge();
+        }, gameTicks);
     }
     addCharge() {
-        this.charge += 1;
-        modulatePaddlePosition();
-        if (this.charge > 60) bounce();
+        this.paddle.charge++;
+        this.modulatePaddlePosition();
+        if (this.paddle.charge >= 30) this.bounce();
+        console.log(this.paddle.charge);
     }
-    // modulatePaddlePosition(){
-    //     this.paddle.x =
-    // }
+    modulatePaddlePosition() {
+        this.paddle.x = this.paddle.origin.x - this.paddle.charge * Math.random();
+    }
     bounce() {
-        this.charge = 0;
+        this.paddle.charge = 0;
+        clearInterval(this.chargeInterval);
     }
     drawPaddle() {
         ctx.fillStyle = 'white';
@@ -136,7 +142,7 @@ class Player {
     }
 }
 
-const gameTicks = 60 / 1000;
+const gameTicks = 1000 / 60;
 const player1 = new Player();
 const player2 = new Player();
 playersInit();
@@ -165,11 +171,11 @@ function gameFrame() {
 function checkPaddleMovement() {
     if (keyMap[player1.steering.up]) player1.movePaddle(-1);
     if (keyMap[player1.steering.down]) player1.movePaddle(1);
-    if (keyMap[player1.steering.charge]) player1.startChargeAccumulating();
+    if (keyMap[player1.steering.chargeButton]) player1.startChargeAccumulating();
 
     if (keyMap[player2.steering.up]) player2.movePaddle(-1);
     if (keyMap[player2.steering.down]) player2.movePaddle(1);
-    if (keyMap[player2.steering.charge]) player2.startChargeAccumulating();
+    if (keyMap[player2.steering.chargeButton]) player2.startChargeAccumulating();
 }
 
 function draw() {
