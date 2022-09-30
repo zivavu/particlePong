@@ -20,7 +20,7 @@ class Ball {
         };
         this.diameter = 35;
         this.centerY = this.position.y + this.diameter / 2;
-        this.velocity = 13;
+        this.velocity = 20;
         this.direction = {
             x: Math.random() > 0.5 ? 1 : -1,
             y: Math.random() * 0.8 - 0.4,
@@ -67,9 +67,36 @@ class Ball {
         if (this.position.x <= 0 || this.position.x >= canvas.width) {
             if (this.direction.x > 0) player1.score++;
             else player2.score++;
-            ball = new Ball();
+            // ball = new Ball();
+            particleArr = [];
             updateScore();
         }
+    }
+}
+let particleArr = [];
+class TrailParticle {
+    constructor() {
+        this.position = {
+            x: ball.position.x + Math.random() * ball.diameter,
+            y: ball.position.y + Math.random() * ball.diameter,
+        };
+        this.diameter = Math.random() * 5 + 3;
+        this.opacity = 80;
+        this.velocity = Math.random() * 10 + 5;
+        this.direction = {
+            x: -ball.direction.x,
+            y: Math.random() * -ball.direction.y - ball.direction.y / 2,
+        };
+    }
+    update() {
+        this.diameter *= 1.02;
+        this.opacity *= 0.97;
+        this.position.x += (this.direction.x * this.velocity) / 2;
+        this.position.y += this.direction.y * this.velocity;
+    }
+    draw() {
+        ctx.fillStyle = `rgba(255,255,255, ${this.opacity}%)`;
+        ctx.fillRect(this.position.x, this.position.y, this.diameter, this.diameter);
     }
 }
 let ball = new Ball();
@@ -171,7 +198,8 @@ document.onkeydown = onkeyup = function (e) {
 function gameFrame() {
     checkPaddleMovement();
     ball.update();
-    // ball.checkWin();
+    ball.checkWin();
+    particleArr.push(new TrailParticle());
     draw();
 }
 
@@ -193,6 +221,11 @@ function draw() {
     player1.drawPaddle();
     player2.drawPaddle();
     ball.draw();
+    particleArr.forEach((particle, i) => {
+        if (particle.opacity < 0.1) particleArr.shift();
+        particle.update();
+        particle.draw();
+    });
 }
 
 function updateScore() {
