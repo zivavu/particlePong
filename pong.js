@@ -8,8 +8,8 @@ window.onresize = resizeCanvas;
 function resizeCanvas() {
     canvas.height = window.innerHeight;
     canvas.width = window.innerWidth;
-    player1.setPaddleX(60);
-    player2.setPaddleX(canvas.width - 80);
+    player1.setPaddle(60);
+    player2.setPaddle(canvas.width - 80);
     draw();
 }
 class Ball {
@@ -51,7 +51,7 @@ class Ball {
 
         if (
             player2.paddle.x <= this.position.x + this.diameter &&
-            player2.paddle.x >= this.position.x &&
+            player2.paddle.x + player2.paddle.width / 2 >= this.position.x &&
             player2.paddle.y <= this.position.y + this.diameter &&
             player2.paddle.y + player2.paddle.height >= this.position.y
         ) {
@@ -83,11 +83,12 @@ class Player {
             bounceMultiplier: 1.1,
             y: canvas.height / 2,
             charge: 0,
+            maxCharge: 50,
         };
         this.score = 0;
     }
 
-    setPaddleX(paddlePosition) {
+    setPaddle(paddlePosition) {
         this.paddle.x = paddlePosition;
         this.paddle.origin = {
             x: this.paddle.x,
@@ -102,6 +103,10 @@ class Player {
             chargeButton: chargeButton,
         };
     }
+    setBounceDirection(direction) {
+        this.bounceDirection = direction;
+        this.charegeDirection = -this.bounceDirection;
+    }
     movePaddle(direction) {
         this.paddle.origin.y += direction * this.paddle.velocity;
 
@@ -115,30 +120,30 @@ class Player {
         }
         this.paddle.y = this.paddle.origin.y;
     }
-    startChargeAccumulating() {
-        if (this.paddle.charge > 0) return;
-        this.paddle.charge++;
-        let me = this;
-        this.chargeInterval = setInterval(function () {
-            me.addCharge();
-        }, gameTicks);
-    }
+
     addCharge() {
+        if (this.paddle.charge >= this.paddle.maxCharge) {
+            this.paddle.x = this.paddle.origin.x;
+            return;
+        }
         this.paddle.charge++;
         this.modulatePaddlePosition();
-        if (this.paddle.charge >= 30) this.bounce();
-        console.log(this.paddle.charge);
     }
     modulatePaddlePosition() {
-        this.paddle.x = this.paddle.origin.x - this.paddle.charge * Math.random();
+        let tillMax = this.paddle.maxCharge - this.paddle.charge;
+        this.paddle.x = this.paddle.origin.x + Math.random() * (tillMax - tillMax / 2);
     }
     bounce() {
+        if (this.paddle.charge == 0) return;
+        this.paddle.width = (this.paddle.width * this.paddle.charge) / 15;
+        if (this.paddle.width < 40) this.paddle.width = 40;
         this.paddle.charge = 0;
-        clearInterval(this.chargeInterval);
+        this.paddle.x = this.paddle.origin.x;
     }
     drawPaddle() {
         ctx.fillStyle = 'white';
         ctx.fillRect(this.paddle.x, this.paddle.y, this.paddle.width / 2, this.paddle.height);
+        if (this.paddle.width > 40) this.paddle.width -= 5;
     }
 }
 
@@ -148,10 +153,12 @@ const player2 = new Player();
 playersInit();
 function playersInit() {
     player1.setSteering('w', 's', 'q');
-    player1.setPaddleX(60);
+    player1.setPaddle(100);
+    player1.setBounceDirection(-1.6);
 
     player2.setSteering('ArrowUp', 'ArrowDown', 'ArrowLeft');
-    player2.setPaddleX(canvas.width - 80);
+    player2.setPaddle(canvas.width - 120);
+    player2.setBounceDirection(1.6);
     draw();
     setInterval(gameFrame, gameTicks);
 }
@@ -171,11 +178,13 @@ function gameFrame() {
 function checkPaddleMovement() {
     if (keyMap[player1.steering.up]) player1.movePaddle(-1);
     if (keyMap[player1.steering.down]) player1.movePaddle(1);
-    if (keyMap[player1.steering.chargeButton]) player1.startChargeAccumulating();
+    if (keyMap[player1.steering.chargeButton]) player1.addCharge();
+    else player1.bounce();
 
     if (keyMap[player2.steering.up]) player2.movePaddle(-1);
     if (keyMap[player2.steering.down]) player2.movePaddle(1);
-    if (keyMap[player2.steering.chargeButton]) player2.startChargeAccumulating();
+    if (keyMap[player2.steering.chargeButton]) player2.addCharge();
+    else player2.bounce();
 }
 
 function draw() {
