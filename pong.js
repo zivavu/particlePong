@@ -8,8 +8,8 @@ window.onresize = resizeCanvas;
 function resizeCanvas() {
     canvas.height = window.innerHeight;
     canvas.width = window.innerWidth;
-    player1.setPaddlePosition(60);
-    player2.setPaddlePosition(canvas.width - 80);
+    player1.setPaddleX(60);
+    player2.setPaddleX(canvas.width - 80);
     draw();
 }
 class Ball {
@@ -19,10 +19,10 @@ class Ball {
             y: canvas.height / 2,
         };
         this.diameter = 35;
-        this.centerX = this.position.x + this.diameter / 2;
+        this.centerY = this.position.y + this.diameter / 2;
         this.velocity = 13;
         this.direction = {
-            x: -1,
+            x: Math.random() > 0.5 ? 1 : -1,
             y: Math.random() * 0.8 - 0.4,
         };
     }
@@ -34,7 +34,7 @@ class Ball {
 
     update() {
         this.checkColision();
-        this.centerX = this.position.x + this.diameter / 2;
+        this.centerY = this.position.y + this.diameter / 2;
         this.position.x += this.direction.x * this.velocity;
         this.position.y += this.direction.y * this.velocity;
     }
@@ -46,7 +46,9 @@ class Ball {
             player1.paddle.y + player1.paddle.height >= this.position.y
         ) {
             this.direction.x = 1;
+            this.direction.y = -(player1.paddle.y - this.centerY + player1.paddle.height / 2) / player1.paddle.height;
         }
+
         if (
             player2.paddle.x <= this.position.x + this.diameter &&
             player2.paddle.x >= this.position.x &&
@@ -54,7 +56,9 @@ class Ball {
             player2.paddle.y + player2.paddle.height >= this.position.y
         ) {
             this.direction.x = -1;
+            this.direction.y = -(player2.paddle.y - this.centerY + player2.paddle.height / 2) / player2.paddle.height;
         }
+
         if (this.position.y <= 0 || this.position.y + this.diameter >= canvas.height) {
             this.direction.y = -this.direction.y;
         }
@@ -80,28 +84,51 @@ class Player {
             y: canvas.height / 2,
         };
         this.score = 0;
+        this.charge = 0;
     }
 
-    setPaddlePosition(paddlePosition) {
+    setPaddleX(paddlePosition) {
         this.paddle.x = paddlePosition;
     }
 
-    setSteering(up, down) {
+    setSteering(up, down, charge) {
         this.steering = {
             up: up,
             down: down,
+            charge: charge,
         };
     }
     movePaddle(direction) {
-        if (this.paddle.y < 0) {
+        this.paddle.y += direction * this.paddle.velocity;
+
+        this.paddle.origin = {
+            x: this.paddle.x,
+            y: this.paddle.y,
+        };
+
+        if (this.paddle.y <= 0) {
             this.paddle.y = 0;
             return;
         }
-        if (this.paddle.y > canvas.height - this.paddle.height) {
+        if (this.paddle.y >= canvas.height - this.paddle.height) {
             this.paddle.y = canvas.height - this.paddle.height;
             return;
         }
-        this.paddle.y += direction * this.paddle.velocity;
+    }
+    startChargeAccumulating() {
+        if (this.charge > 0) return;
+        this.chargeInterval = setInterval(addCharge, gameTicks);
+    }
+    addCharge() {
+        this.charge += 1;
+        modulatePaddlePosition();
+        if (this.charge > 60) bounce();
+    }
+    // modulatePaddlePosition(){
+    //     this.paddle.x =
+    // }
+    bounce() {
+        this.charge = 0;
     }
     drawPaddle() {
         ctx.fillStyle = 'white';
@@ -109,18 +136,18 @@ class Player {
     }
 }
 
+const gameTicks = 60 / 1000;
 const player1 = new Player();
 const player2 = new Player();
-const players = [player1, player2];
 playersInit();
 function playersInit() {
-    player1.setSteering('w', 's');
-    player1.setPaddlePosition(60);
+    player1.setSteering('w', 's', 'q');
+    player1.setPaddleX(60);
 
-    player2.setSteering('ArrowUp', 'ArrowDown');
-    player2.setPaddlePosition(canvas.width - 80);
+    player2.setSteering('ArrowUp', 'ArrowDown', 'ArrowLeft');
+    player2.setPaddleX(canvas.width - 80);
     draw();
-    setInterval(gameFrame, 60 / 1000);
+    setInterval(gameFrame, gameTicks);
 }
 
 //paddlesMovement
@@ -131,15 +158,18 @@ document.onkeydown = onkeyup = function (e) {
 function gameFrame() {
     checkPaddleMovement();
     ball.update();
-    ball.checkWin();
+    // ball.checkWin();
     draw();
 }
 
 function checkPaddleMovement() {
     if (keyMap[player1.steering.up]) player1.movePaddle(-1);
     if (keyMap[player1.steering.down]) player1.movePaddle(1);
+    if (keyMap[player1.steering.charge]) player1.startChargeAccumulating();
+
     if (keyMap[player2.steering.up]) player2.movePaddle(-1);
     if (keyMap[player2.steering.down]) player2.movePaddle(1);
+    if (keyMap[player2.steering.charge]) player2.startChargeAccumulating();
 }
 
 function draw() {
