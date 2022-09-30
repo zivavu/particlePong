@@ -15,10 +15,11 @@
     width: 20vw;
     height: 10vh;
     top: 10vh;
-    left: 40vw;
+    left: 50%;
     line-height: 10vh;
     font-size: 10vh;
     color: rgba(255, 255, 255, 0.301);
     text-align: center;
-    letter-spacing: 7vw;
+    letter-spacing: 3.5vw;
+    transform: translateX(-50%);
 }

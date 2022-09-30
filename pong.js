@@ -47,6 +47,7 @@ class Ball {
         ) {
             this.direction.x = 1;
             this.direction.y = -(player1.paddle.y - this.centerY + player1.paddle.height / 2) / player1.paddle.height;
+            this.velocity = (this.velocity * player1.paddle.width) / (player1.paddle.defaultWidth * 4);
             hitParticles();
         }
 
@@ -58,6 +59,7 @@ class Ball {
         ) {
             this.direction.x = -1;
             this.direction.y = -(player2.paddle.y - this.centerY + player2.paddle.height / 2) / player2.paddle.height;
+            this.velocity = (this.velocity * player2.paddle.width) / (player2.paddle.defaultWidth * 4);
             hitParticles();
         }
 
@@ -65,6 +67,7 @@ class Ball {
             this.direction.y = -this.direction.y;
             hitParticles();
         }
+        if (this.velocity < 15) this.velocity = 15;
     }
     checkWin() {
         if (this.position.x <= 0 || this.position.x >= canvas.width) {
@@ -226,7 +229,7 @@ function playersInit() {
     player1.setPaddle(100);
     player1.setDirection('right');
 
-    player2.setSteering('ArrowUp', 'ArrowDown', 'ArrowLeft');
+    player2.setSteering('ArrowUp', 'ArrowDown', 'ArrowRight');
     player2.setPaddle(canvas.width - 120);
     player2.setDirection('left');
     draw();
