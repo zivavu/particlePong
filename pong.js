@@ -40,7 +40,7 @@ class Ball {
     }
     checkColision() {
         if (
-            player1.paddle.x + player1.paddle.width / 2 >= this.position.x &&
+            player1.paddle.x + player1.paddle.width >= this.position.x &&
             player1.paddle.x <= this.position.x + this.diameter &&
             player1.paddle.y <= this.position.y + this.diameter &&
             player1.paddle.y + player1.paddle.height >= this.position.y
@@ -51,8 +51,8 @@ class Ball {
         }
 
         if (
-            player2.paddle.x <= this.position.x + this.diameter &&
-            player2.paddle.x + player2.paddle.width / 2 >= this.position.x &&
+            player2.paddle.x - player2.paddle.width <= this.position.x + this.diameter &&
+            player2.paddle.x >= this.position.x &&
             player2.paddle.y <= this.position.y + this.diameter &&
             player2.paddle.y + player2.paddle.height >= this.position.y
         ) {
@@ -76,7 +76,7 @@ class Ball {
         }
     }
 }
-let trailPartilcesLimit = 150;
+let trailPartilcesLimit = 110;
 let trailParticlesArr = [];
 class TrailParticle {
     constructor() {
@@ -112,18 +112,17 @@ class HitParticle {
             x: ball.position.x + Math.random() * ball.diameter,
             y: ball.position.y + Math.random() * ball.diameter,
         };
-        this.diameter = Math.random() * 8 + 3;
+        this.diameter = Math.random() * 7 + 4;
         this.opacity = 80;
         this.velocity = Math.random() * 10 + 5;
         this.direction = {
             x: Math.random() * 4 - 2,
             y: Math.random() * 4 - 2,
         };
-        console.log(this.direction);
     }
     update() {
         this.diameter *= 1.05;
-        this.opacity *= 0.95;
+        this.opacity *= 0.93;
         this.position.x += this.direction.x * this.velocity;
         this.position.y += this.direction.y * this.velocity;
     }
@@ -144,7 +143,8 @@ let ball = new Ball();
 class Player {
     constructor() {
         this.paddle = {
-            width: 40,
+            width: 20,
+            defaultWidth: 20,
             height: 200,
             speed: 13,
             bounceMultiplier: 1.1,
@@ -170,9 +170,8 @@ class Player {
             chargeButton: chargeButton,
         };
     }
-    setBounceDirection(direction) {
-        this.bounceDirection = direction;
-        this.charegeDirection = -this.bounceDirection;
+    setDirection(direction) {
+        this.paddle.direction = direction;
     }
     movePaddle(direction) {
         this.paddle.origin.y += direction * this.paddle.speed;
@@ -202,15 +201,19 @@ class Player {
     }
     bounce() {
         if (this.paddle.charge == 0) return;
-        this.paddle.width = (this.paddle.width * this.paddle.charge) / 15;
-        if (this.paddle.width < 40) this.paddle.width = 40;
+        this.paddle.width = (this.paddle.width * this.paddle.charge) / 10;
+        if (this.paddle.width < this.paddle.defaultWidth) this.paddle.width = this.paddle.defaultWidth;
         this.paddle.charge = 0;
         this.paddle.x = this.paddle.origin.x;
     }
     drawPaddle() {
         ctx.fillStyle = 'white';
-        ctx.fillRect(this.paddle.x, this.paddle.y, this.paddle.width / 2, this.paddle.height);
-        if (this.paddle.width > 40) this.paddle.width -= 5;
+        if (this.paddle.direction == 'left') {
+            ctx.fillRect(this.paddle.x, this.paddle.y, this.paddle.width * -1, this.paddle.height);
+        } else {
+            ctx.fillRect(this.paddle.x, this.paddle.y, this.paddle.width, this.paddle.height);
+        }
+        if (this.paddle.width > this.paddle.defaultWidth) this.paddle.width -= 5;
     }
 }
 
@@ -221,11 +224,11 @@ playersInit();
 function playersInit() {
     player1.setSteering('w', 's', 'q');
     player1.setPaddle(100);
-    player1.setBounceDirection(-1.6);
+    player1.setDirection('right');
 
     player2.setSteering('ArrowUp', 'ArrowDown', 'ArrowLeft');
     player2.setPaddle(canvas.width - 120);
-    player2.setBounceDirection(1.6);
+    player2.setDirection('left');
     draw();
     setInterval(gameFrame, gameTicks);
 }
