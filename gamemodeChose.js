@@ -34,25 +34,21 @@ function selectDifficulty(e) {
             difficultyNum = 1;
             break;
         case 'Medium':
-            difficultyNum = 2;
+            difficultyNum = 1.5;
             break;
         case 'Hard':
             difficultyNum = 3;
             break;
         case 'Imposible':
-            difficultyNum = 5;
+            difficultyNum = 6;
             break;
     }
     bot = new Bot();
     bot.setParams(difficultyNum);
     initScreen.style.visibility = 'hidden';
-    setTimeout(() => {
-        gameInit();
-    }, 400);
+    gameInit();
 }
 function init2PlayersGame() {
     initScreen.style.visibility = 'hidden';
-    setTimeout(() => {
-        gameInit();
-    }, 400);
+    gameInit();
 }

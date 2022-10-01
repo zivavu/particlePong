@@ -1,4 +1,5 @@
 import { bot } from './gamemodeChose.js';
+import { hitParticles, particleHandler, resetParticles, TrailParticle, trailParticlesArr } from './particles.js';
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -12,7 +13,6 @@ function resizeCanvas() {
     canvas.width = window.innerWidth;
     player1.setPaddle(60);
     player2.setPaddle(canvas.width - 80);
-    console.log(bot);
 }
 class Ball {
     constructor() {
@@ -21,8 +21,11 @@ class Ball {
             y: canvas.height / 2,
         };
         this.diameter = 35;
-        this.centerY = this.position.y + this.diameter / 2;
-        this.velocity = 13;
+        this.center = {
+            x: this.position.x + this.diameter / 2,
+            y: this.position.y + this.diameter / 2,
+        };
+        this.velocity = 10;
         this.direction = {
             x: Math.random() > 0.5 ? 1 : -1,
             y: Math.random() * 0.4 - 0.2,
@@ -36,10 +39,12 @@ class Ball {
 
     update() {
         this.checkColision();
-        this.centerY = this.position.y + this.diameter / 2;
+        this.center.y = this.position.y + this.diameter / 2;
+        this.center.x = this.position.x + this.diameter;
         this.position.x += this.direction.x * this.velocity;
         this.position.y += this.direction.y * this.velocity;
     }
+
     checkColision() {
         if (
             player1.paddle.x + player1.paddle.width >= this.position.x &&
@@ -48,8 +53,9 @@ class Ball {
             player1.paddle.y + player1.paddle.height >= this.position.y
         ) {
             this.direction.x = 1;
-            this.direction.y = (-(player1.paddle.y - this.centerY + player1.paddle.height / 2) * 1.3) / player1.paddle.height;
+            this.direction.y = (-(player1.paddle.y - this.center.y + player1.paddle.height / 2) * 1.4) / player1.paddle.height;
             this.velocity = (this.velocity * player1.paddle.width) / (player1.paddle.defaultWidth * 4);
+            if (this.velocity <= 20) this.velocity = 20;
             hitParticles();
         }
 
@@ -60,8 +66,9 @@ class Ball {
             player2.paddle.y + player2.paddle.height >= this.position.y
         ) {
             this.direction.x = -1;
-            this.direction.y = (-(player2.paddle.y - this.centerY + player2.paddle.height / 2) * 1.3) / player2.paddle.height;
+            this.direction.y = (-(player2.paddle.y - this.center.y + player2.paddle.height / 2) * 1.4) / player2.paddle.height;
             this.velocity = (this.velocity * player2.paddle.width) / (player2.paddle.defaultWidth * 4);
+            if (this.velocity <= 20) this.velocity = 20;
             hitParticles();
         }
 
@@ -69,78 +76,15 @@ class Ball {
             this.direction.y = -this.direction.y;
             hitParticles();
         }
-        if (this.velocity <= 20) this.velocity = 20;
     }
     checkWin() {
         if (this.position.x <= 0 || this.position.x >= canvas.width) {
             if (this.direction.x > 0) player1.score++;
             else player2.score++;
             ball = new Ball();
-            trailParticlesArr = [];
-            hitParticlesArr = [];
+            resetParticles();
             updateScore();
         }
-    }
-}
-let trailPartilcesLimit = 140;
-let trailParticlesArr = [];
-class TrailParticle {
-    constructor() {
-        this.position = {
-            x: ball.position.x + Math.random() * ball.diameter,
-            y: ball.position.y + Math.random() * ball.diameter,
-        };
-        this.diameter = Math.random() * 9 + 3;
-        this.opacity = 80;
-        this.velocity = Math.random() * 10 + 5;
-        this.direction = {
-            x: -ball.direction.x,
-            y: Math.random() * (-ball.direction.y - ball.direction.y / 2) * 2,
-        };
-    }
-    update() {
-        this.diameter *= 1.02;
-        this.opacity *= 0.96;
-        this.position.x += (this.direction.x * this.velocity) / 2;
-        this.position.y += this.direction.y * this.velocity;
-    }
-    draw() {
-        ctx.fillStyle = `rgba(255,255,255, ${this.opacity}%)`;
-        ctx.fillRect(this.position.x, this.position.y, this.diameter, this.diameter);
-    }
-}
-
-let hitParticlesLimit = 80;
-let hitParticlesArr = [];
-class HitParticle {
-    constructor() {
-        this.position = {
-            x: ball.position.x + Math.random() * ball.diameter,
-            y: ball.position.y + Math.random() * ball.diameter,
-        };
-        this.diameter = Math.random() * 7 + 4;
-        this.opacity = 80;
-        this.velocity = Math.random() * 10 + 5;
-        this.direction = {
-            x: Math.random() * 4 - 2,
-            y: Math.random() * 4 - 2,
-        };
-    }
-    update() {
-        this.diameter *= 1.05;
-        this.opacity *= 0.93;
-        this.position.x += this.direction.x * this.velocity;
-        this.position.y += this.direction.y * this.velocity;
-    }
-    draw() {
-        ctx.fillStyle = `rgba(255,255,255, ${this.opacity}%)`;
-        ctx.fillRect(this.position.x, this.position.y, this.diameter, this.diameter);
-    }
-}
-
-function hitParticles() {
-    for (let i = 0; i < 20; i++) {
-        hitParticlesArr.push(new HitParticle());
     }
 }
 
@@ -219,7 +163,7 @@ class Player {
         } else {
             ctx.fillRect(this.paddle.x, this.paddle.y, this.paddle.width, this.paddle.height);
         }
-        if (this.paddle.width > this.paddle.defaultWidth) this.paddle.width -= 5;
+        if (this.paddle.width > this.paddle.defaultWidth) this.paddle.width -= 3;
     }
 }
 
@@ -258,6 +202,8 @@ function checkPaddleMovement() {
 
     if (bot) {
         bot.movePaddle();
+        if (bot.addCharge) player2.addCharge();
+        else player2.bounce();
         return;
     }
     if (keyMap[player2.steering.up]) player2.movePaddle(-1);
@@ -273,19 +219,6 @@ function draw() {
     player2.drawPaddle();
     ball.draw();
     particleHandler();
-}
-
-function particleHandler() {
-    if (trailParticlesArr.length > trailPartilcesLimit) trailParticlesArr.shift();
-    trailParticlesArr.forEach((particle) => {
-        particle.update();
-        particle.draw();
-    });
-    if (hitParticlesArr.length > hitParticlesLimit) hitParticlesArr.shift();
-    hitParticlesArr.forEach((particle) => {
-        particle.update();
-        particle.draw();
-    });
 }
 
 function updateScore() {
