@@ -1,4 +1,4 @@
-import { easy } from './bots.js';
+import { bot } from './gamemodeChose.js';
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -12,7 +12,7 @@ function resizeCanvas() {
     canvas.width = window.innerWidth;
     player1.setPaddle(60);
     player2.setPaddle(canvas.width - 80);
-    draw();
+    console.log(bot);
 }
 class Ball {
     constructor() {
@@ -22,7 +22,7 @@ class Ball {
         };
         this.diameter = 35;
         this.centerY = this.position.y + this.diameter / 2;
-        this.velocity = 15;
+        this.velocity = 13;
         this.direction = {
             x: Math.random() > 0.5 ? 1 : -1,
             y: Math.random() * 0.4 - 0.2,
@@ -69,7 +69,7 @@ class Ball {
             this.direction.y = -this.direction.y;
             hitParticles();
         }
-        if (this.velocity <= 15) this.velocity = 15;
+        if (this.velocity <= 20) this.velocity = 20;
     }
     checkWin() {
         if (this.position.x <= 0 || this.position.x >= canvas.width) {
@@ -77,11 +77,12 @@ class Ball {
             else player2.score++;
             ball = new Ball();
             trailParticlesArr = [];
+            hitParticlesArr = [];
             updateScore();
         }
     }
 }
-let trailPartilcesLimit = 0;
+let trailPartilcesLimit = 140;
 let trailParticlesArr = [];
 class TrailParticle {
     constructor() {
@@ -225,16 +226,14 @@ class Player {
 const gameTicks = 1000 / 60;
 const player1 = new Player();
 export const player2 = new Player();
-playersInit();
-function playersInit() {
+export function gameInit() {
     player1.setSteering('w', 's', 'q');
     player1.setPaddle(100);
     player1.setDirection('right');
 
-    player2.setSteering('ArrowUp', 'ArrowDown', 'ArrowRight');
+    if (!bot) player2.setSteering('ArrowUp', 'ArrowDown', 'ArrowRight');
     player2.setPaddle(canvas.width - 120);
     player2.setDirection('left');
-    easy.updatePaddleValues();
     setInterval(gameFrame, gameTicks);
 }
 
@@ -248,7 +247,6 @@ function gameFrame() {
     ball.update();
     ball.checkWin();
     trailParticlesArr.push(new TrailParticle());
-    easy.movePaddle();
     draw();
 }
 
@@ -258,6 +256,10 @@ function checkPaddleMovement() {
     if (keyMap[player1.steering.chargeButton]) player1.addCharge();
     else player1.bounce();
 
+    if (bot) {
+        bot.movePaddle();
+        return;
+    }
     if (keyMap[player2.steering.up]) player2.movePaddle(-1);
     if (keyMap[player2.steering.down]) player2.movePaddle(1);
     if (keyMap[player2.steering.chargeButton]) player2.addCharge();
