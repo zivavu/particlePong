@@ -52,7 +52,7 @@ class Ball {
             player1.paddle.y + player1.paddle.height >= this.position.y
         ) {
             this.direction.x = 1;
-            this.direction.y = (-(player1.paddle.y - this.center.y + player1.paddle.height / 2) * 1.4) / player1.paddle.height;
+            this.direction.y = (-(player1.paddle.y - this.center.y + player1.paddle.height / 2) * 1.6) / player1.paddle.height;
             this.velocity = (this.velocity * player1.paddle.width) / (player1.paddle.defaultWidth * 4);
             if (this.velocity <= 20) this.velocity = 20;
             hitParticles();
@@ -65,7 +65,7 @@ class Ball {
             player2.paddle.y + player2.paddle.height >= this.position.y
         ) {
             this.direction.x = -1;
-            this.direction.y = (-(player2.paddle.y - this.center.y + player2.paddle.height / 2) * 1.4) / player2.paddle.height;
+            this.direction.y = (-(player2.paddle.y - this.center.y + player2.paddle.height / 2) * 1.6) / player2.paddle.height;
             this.velocity = (this.velocity * player2.paddle.width) / (player2.paddle.defaultWidth * 4);
             if (this.velocity <= 20) this.velocity = 20;
             hitParticles();

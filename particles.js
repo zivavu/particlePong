@@ -76,7 +76,6 @@ export function particleHandler() {
         particle.update();
         particle.draw();
     });
-    console.log(trailParticlesArr.length, hitParticlesArr.length);
 }
 export function resetParticles() {
     hitParticlesArr = [];

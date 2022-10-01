@@ -34,26 +34,30 @@ function selectDifficulty(e) {
     let difficulty = e.target.innerText;
     let speed = 0;
     let refreshRate = 0;
+    let randomOffset = 0;
     switch (difficulty) {
         case 'Easy':
             speed = 8;
             refreshRate = 90;
             break;
         case 'Medium':
-            speed = 12;
-            refreshRate = 60;
+            speed = 10;
+            refreshRate = 40;
+            randomOffset = 3;
             break;
         case 'Hard':
-            speed = 16;
-            refreshRate = 40;
+            speed = 14;
+            refreshRate = 25;
+            randomOffset = 6;
             break;
         case 'Imposible':
-            speed = 30;
+            speed = 25;
             refreshRate = 10;
+            randomOffset = 4;
             break;
     }
     bot = new Bot();
-    bot.setParams(speed, refreshRate);
+    bot.setParams(speed, refreshRate, randomOffset);
     initScreen.style.visibility = 'hidden';
     gameInit();
 }

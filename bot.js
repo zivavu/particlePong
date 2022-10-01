@@ -1,7 +1,7 @@
 import { ball, player2 } from './pong.js';
 export class Bot {
-    setParams(speed, refreshRate) {
-        (this.speed = speed), (this.refreshRate = refreshRate);
+    setParams(speed, refreshRate, randomOffset) {
+        (this.speed = speed), (this.refreshRate = refreshRate), (this.randomOffset = randomOffset);
         player2.paddle.speed = this.speed;
         var me = this;
         this.interval = setInterval(() => me.locateBall(), me.refreshRate);
@@ -20,7 +20,14 @@ export class Bot {
     }
     checkIfCharge() {
         if (this.ballX < player2.paddle.x - player2.paddle.width) this.addCharge = true;
-        else this.addCharge = false;
+        else if (this.addCharge) {
+            let offsetDirection = this.targetY >= player2.paddle.y + player2.paddle.height / 2 ? 1 : -1;
+            console.log(offsetDirection);
+            for (let i = 0; i < this.randomOffset; i++) {
+                player2.movePaddle(offsetDirection);
+            }
+            this.addCharge = false;
+        }
     }
 
     updatePaddleValues() {
