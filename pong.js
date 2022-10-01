@@ -1,3 +1,5 @@
+import { easy } from './bots.js';
+
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const scoreDisplay = document.getElementById('score-display');
@@ -20,7 +22,7 @@ class Ball {
         };
         this.diameter = 35;
         this.centerY = this.position.y + this.diameter / 2;
-        this.velocity = 17;
+        this.velocity = 15;
         this.direction = {
             x: Math.random() > 0.5 ? 1 : -1,
             y: Math.random() * 0.4 - 0.2,
@@ -46,7 +48,7 @@ class Ball {
             player1.paddle.y + player1.paddle.height >= this.position.y
         ) {
             this.direction.x = 1;
-            this.direction.y = -(player1.paddle.y - this.centerY + player1.paddle.height / 2) / player1.paddle.height;
+            this.direction.y = (-(player1.paddle.y - this.centerY + player1.paddle.height / 2) * 1.3) / player1.paddle.height;
             this.velocity = (this.velocity * player1.paddle.width) / (player1.paddle.defaultWidth * 4);
             hitParticles();
         }
@@ -58,7 +60,7 @@ class Ball {
             player2.paddle.y + player2.paddle.height >= this.position.y
         ) {
             this.direction.x = -1;
-            this.direction.y = -(player2.paddle.y - this.centerY + player2.paddle.height / 2) / player2.paddle.height;
+            this.direction.y = (-(player2.paddle.y - this.centerY + player2.paddle.height / 2) * 1.3) / player2.paddle.height;
             this.velocity = (this.velocity * player2.paddle.width) / (player2.paddle.defaultWidth * 4);
             hitParticles();
         }
@@ -67,7 +69,7 @@ class Ball {
             this.direction.y = -this.direction.y;
             hitParticles();
         }
-        if (this.velocity < 15) this.velocity = 15;
+        if (this.velocity <= 15) this.velocity = 15;
     }
     checkWin() {
         if (this.position.x <= 0 || this.position.x >= canvas.width) {
@@ -79,7 +81,7 @@ class Ball {
         }
     }
 }
-let trailPartilcesLimit = 110;
+let trailPartilcesLimit = 0;
 let trailParticlesArr = [];
 class TrailParticle {
     constructor() {
@@ -87,7 +89,7 @@ class TrailParticle {
             x: ball.position.x + Math.random() * ball.diameter,
             y: ball.position.y + Math.random() * ball.diameter,
         };
-        this.diameter = Math.random() * 5 + 3;
+        this.diameter = Math.random() * 9 + 3;
         this.opacity = 80;
         this.velocity = Math.random() * 10 + 5;
         this.direction = {
@@ -97,7 +99,7 @@ class TrailParticle {
     }
     update() {
         this.diameter *= 1.02;
-        this.opacity *= 0.97;
+        this.opacity *= 0.96;
         this.position.x += (this.direction.x * this.velocity) / 2;
         this.position.y += this.direction.y * this.velocity;
     }
@@ -107,7 +109,7 @@ class TrailParticle {
     }
 }
 
-let hitParticlesLimit = 40;
+let hitParticlesLimit = 80;
 let hitParticlesArr = [];
 class HitParticle {
     constructor() {
@@ -141,7 +143,7 @@ function hitParticles() {
     }
 }
 
-let ball = new Ball();
+export let ball = new Ball();
 
 class Player {
     constructor() {
@@ -222,7 +224,7 @@ class Player {
 
 const gameTicks = 1000 / 60;
 const player1 = new Player();
-const player2 = new Player();
+export const player2 = new Player();
 playersInit();
 function playersInit() {
     player1.setSteering('w', 's', 'q');
@@ -232,7 +234,7 @@ function playersInit() {
     player2.setSteering('ArrowUp', 'ArrowDown', 'ArrowRight');
     player2.setPaddle(canvas.width - 120);
     player2.setDirection('left');
-    draw();
+    easy.updatePaddleValues();
     setInterval(gameFrame, gameTicks);
 }
 
@@ -246,6 +248,7 @@ function gameFrame() {
     ball.update();
     ball.checkWin();
     trailParticlesArr.push(new TrailParticle());
+    easy.movePaddle();
     draw();
 }
 
