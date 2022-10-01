@@ -1,10 +1,10 @@
 import { ball, player2 } from './pong.js';
 export class Bot {
-    setParams(difficulty) {
-        (this.speed = 8 * difficulty), (this.updateRate = 800 / (difficulty * 100));
+    setParams(speed, refreshRate) {
+        (this.speed = speed), (this.refreshRate = refreshRate);
         player2.paddle.speed = this.speed;
         var me = this;
-        this.interval = setInterval(() => me.locateBall(), me.updateRate);
+        this.interval = setInterval(() => me.locateBall(), me.refreshRate);
     }
     locateBall() {
         this.targetY = ball.center.y;
@@ -19,7 +19,7 @@ export class Bot {
         }
     }
     checkIfCharge() {
-        if (this.ballX > player2.paddle.x - 1100 && this.ballX <= player2.paddle.x - player2.paddle.width) this.addCharge = true;
+        if (this.ballX < player2.paddle.x - player2.paddle.width) this.addCharge = true;
         else this.addCharge = false;
     }
 

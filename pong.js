@@ -3,7 +3,6 @@ import { hitParticles, particleHandler, resetParticles, TrailParticle, trailPart
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-const scoreDisplay = document.getElementById('score-display');
 canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
 
@@ -221,6 +220,9 @@ function draw() {
     particleHandler();
 }
 
+const player1Score = document.getElementById('player-1-score');
+const player2Score = document.getElementById('player-2-score');
 function updateScore() {
-    scoreDisplay.textContent = `${player1.score}:${player2.score}`;
+    player1Score.textContent = player1.score;
+    player2Score.textContent = player2.score;
 }

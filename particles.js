@@ -71,11 +71,12 @@ export function particleHandler() {
         particle.update();
         particle.draw();
     });
-    if (hitParticlesArr.length > hitParticlesLimit) hitParticlesArr.shift();
+    if (hitParticlesArr.length > hitParticlesLimit) hitParticlesArr.splice(1, 20);
     hitParticlesArr.forEach((particle) => {
         particle.update();
         particle.draw();
     });
+    console.log(trailParticlesArr.length, hitParticlesArr.length);
 }
 export function resetParticles() {
     hitParticlesArr = [];

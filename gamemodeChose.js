@@ -16,9 +16,13 @@ function appendDifficultySelectButtons() {
     singlePlayerButton.remove();
     twoPlayersButton.remove();
     easy.innerText = 'Easy';
+    easy.style.backgroundColor = 'limegreen';
     medium.innerText = 'Medium';
+    medium.style.backgroundColor = 'rgb(11, 87, 87)';
     hard.innerText = 'Hard';
+    hard.style.backgroundColor = 'rgb(100, 0, 0)';
     imposible.innerText = 'Imposible';
+    imposible.style.backgroundColor = 'rgb(33, 33, 33)';
     buttonsArr.forEach((button) => {
         button.classList.add('difficulty-button');
         initScreen.appendChild(button);
@@ -28,23 +32,28 @@ function appendDifficultySelectButtons() {
 export let bot;
 function selectDifficulty(e) {
     let difficulty = e.target.innerText;
-    let difficultyNum = 1;
+    let speed = 0;
+    let refreshRate = 0;
     switch (difficulty) {
         case 'Easy':
-            difficultyNum = 1;
+            speed = 8;
+            refreshRate = 90;
             break;
         case 'Medium':
-            difficultyNum = 1.5;
+            speed = 12;
+            refreshRate = 60;
             break;
         case 'Hard':
-            difficultyNum = 3;
+            speed = 16;
+            refreshRate = 40;
             break;
         case 'Imposible':
-            difficultyNum = 6;
+            speed = 30;
+            refreshRate = 10;
             break;
     }
     bot = new Bot();
-    bot.setParams(difficultyNum);
+    bot.setParams(speed, refreshRate);
     initScreen.style.visibility = 'hidden';
     gameInit();
 }
