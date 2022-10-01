@@ -8,6 +8,7 @@ let medium = document.createElement('button');
 let hard = document.createElement('button');
 let imposible = document.createElement('button');
 const buttonsArr = [easy, medium, hard, imposible];
+const steerWithMouseCheckbox = document.createElement('input');
 
 singlePlayerButton.onclick = appendDifficultySelectButtons;
 twoPlayersButton.onclick = init2PlayersGame;
@@ -16,7 +17,7 @@ function appendDifficultySelectButtons() {
     singlePlayerButton.remove();
     twoPlayersButton.remove();
     easy.innerText = 'Easy';
-    easy.style.backgroundColor = 'limegreen';
+    easy.style.backgroundColor = 'green';
     medium.innerText = 'Medium';
     medium.style.backgroundColor = 'rgb(11, 87, 87)';
     hard.innerText = 'Hard';
@@ -28,6 +29,18 @@ function appendDifficultySelectButtons() {
         initScreen.appendChild(button);
         button.addEventListener('click', selectDifficulty);
     });
+    steerWithMouseCheckbox.type = 'checkbox';
+    steerWithMouseCheckbox.id = 'steer-with-mouse-checkbox';
+    steerWithMouseCheckbox.checked = false;
+    let steeringWithMouseLabel = document.createElement('label');
+    steeringWithMouseLabel.innerText = 'Steer With Mouse';
+    initScreen.appendChild(steerWithMouseCheckbox);
+    initScreen.appendChild(steeringWithMouseLabel);
+}
+export let steerWithMouse = false;
+steerWithMouseCheckbox.addEventListener('change', steerWithMouseToggle);
+function steerWithMouseToggle(e) {
+    steerWithMouse = e.target.checked;
 }
 export let bot;
 function selectDifficulty(e) {
@@ -46,12 +59,12 @@ function selectDifficulty(e) {
             randomOffset = 3;
             break;
         case 'Hard':
-            speed = 14;
+            speed = 16;
             refreshRate = 25;
-            randomOffset = 6;
+            randomOffset = 5;
             break;
         case 'Imposible':
-            speed = 25;
+            speed = 35;
             refreshRate = 10;
             randomOffset = 4;
             break;
@@ -59,9 +72,12 @@ function selectDifficulty(e) {
     bot = new Bot();
     bot.setParams(speed, refreshRate, randomOffset);
     initScreen.style.visibility = 'hidden';
+    document.getElementById('score-display').style.visibility = 'visible';
+
     gameInit();
 }
 function init2PlayersGame() {
     initScreen.style.visibility = 'hidden';
+    document.getElementById('score-display').style.visibility = 'visible';
     gameInit();
 }

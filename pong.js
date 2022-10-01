@@ -1,4 +1,4 @@
-import { bot } from './gamemodeChose.js';
+import { bot, steerWithMouse } from './gamemodeChose.js';
 import { hitParticles, particleHandler, resetParticles, TrailParticle, trailParticlesArr } from './particles.js';
 
 const canvas = document.getElementById('canvas');
@@ -95,7 +95,7 @@ class Player {
             width: 20,
             defaultWidth: 20,
             height: 200,
-            speed: 13,
+            speed: 25,
             bounceMultiplier: 1.1,
             y: canvas.height / 2,
             charge: 0,
@@ -166,13 +166,17 @@ class Player {
     }
 }
 
+function movePaddleByMouse(e) {
+    player1.paddle.y = e.clientY - player1.paddle.height / 2;
+}
 const gameTicks = 1000 / 60;
-const player1 = new Player();
+export const player1 = new Player();
 export const player2 = new Player();
 export function gameInit() {
     player1.setSteering('w', 's', 'q');
     player1.setPaddle(100);
     player1.setDirection('right');
+    if (steerWithMouse) document.addEventListener('mousemove', movePaddleByMouse);
 
     if (!bot) player2.setSteering('ArrowUp', 'ArrowDown', 'ArrowRight');
     player2.setPaddle(canvas.width - 120);
@@ -194,8 +198,10 @@ function gameFrame() {
 }
 
 function checkPaddleMovement() {
-    if (keyMap[player1.steering.up]) player1.movePaddle(-1);
-    if (keyMap[player1.steering.down]) player1.movePaddle(1);
+    if (!steerWithMouse) {
+        if (keyMap[player1.steering.up]) player1.movePaddle(-1);
+        if (keyMap[player1.steering.down]) player1.movePaddle(1);
+    }
     if (keyMap[player1.steering.chargeButton]) player1.addCharge();
     else player1.bounce();
 

@@ -22,7 +22,6 @@ export class Bot {
         if (this.ballX < player2.paddle.x - player2.paddle.width) this.addCharge = true;
         else if (this.addCharge) {
             let offsetDirection = this.targetY >= player2.paddle.y + player2.paddle.height / 2 ? 1 : -1;
-            console.log(offsetDirection);
             for (let i = 0; i < this.randomOffset; i++) {
                 player2.movePaddle(offsetDirection);
             }
