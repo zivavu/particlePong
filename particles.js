@@ -11,7 +11,7 @@ export class TrailParticle {
             x: ball.position.x + Math.random() * ball.diameter,
             y: ball.position.y + Math.random() * ball.diameter,
         };
-        this.diameter = Math.random() * 9 + 3;
+        this.diameter = Math.random() * 13 + 3;
         this.opacity = 80;
         this.velocity = Math.random() * 10 + 5;
         this.direction = {

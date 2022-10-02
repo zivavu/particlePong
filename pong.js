@@ -37,11 +37,11 @@ class Ball {
     }
 
     update() {
+        this.position.x += this.direction.x * this.velocity;
+        this.position.y += this.direction.y * this.velocity;
         this.center.y = this.position.y + this.diameter / 2;
         this.center.x = this.position.x + this.diameter;
-        this.position.x += this.direction.x * this.velocity;
         this.checkColision();
-        this.position.y += this.direction.y * this.velocity;
         trailParticlesArr.push(new TrailParticle());
     }
 
@@ -56,6 +56,9 @@ class Ball {
             this.direction.y = (-(player1.paddle.y - this.center.y + player1.paddle.height / 2) * 1.6) / player1.paddle.height;
             this.velocity = (this.velocity * player1.paddle.width) / (player1.paddle.defaultWidth * 3);
             if (this.velocity <= 20) this.velocity = 20;
+            console.log(this.velocity);
+            if (this.velocity > 65) this.velocity = 65;
+
             hitParticles(Math.round(((player1.paddle.width / 4) * ball.velocity) / 10));
         }
 
@@ -69,13 +72,13 @@ class Ball {
             this.direction.y = (-(player2.paddle.y - this.center.y + player2.paddle.height / 2) * 1.6) / player2.paddle.height;
             this.velocity = (this.velocity * player2.paddle.width) / (player2.paddle.defaultWidth * 3);
             if (this.velocity <= 20) this.velocity = 20;
+            if (this.velocity > 65) this.velocity = 65;
             hitParticles(Math.round(((player2.paddle.width / 4) * ball.velocity) / 10));
         }
-
         if (this.position.y <= 0 || this.position.y + this.diameter >= canvas.height) {
             if (Math.abs(this.direction.y) < 0.2) {
-                this.direction.y >= 0 ? (this.direction.y = 0.3) : (this.direction.y = -0.3);
-                this.position.y <= 0 ? (this.position.y = 15) : (this.position.y = canvas.height - this.diameter - 15);
+                this.direction.y >= 0 ? (this.direction.y = 0.4) : (this.direction.y = -0.4);
+                this.position.y <= 0 ? (this.position.y = 20) : (this.position.y = canvas.height - this.diameter - 20);
             }
             this.direction.y = -this.direction.y;
             hitParticles(Math.round(ball.velocity));
@@ -100,7 +103,7 @@ class Player {
             width: 30,
             defaultWidth: 30,
             height: 200,
-            speed: 25,
+            speed: 35,
             bounceMultiplier: 1.1,
             y: canvas.height / 2,
             charge: 0,
@@ -130,12 +133,12 @@ class Player {
     movePaddle(direction) {
         this.paddle.origin.y += direction * this.paddle.speed;
 
-        if (this.paddle.origin.y <= 0) {
-            this.paddle.origin.y = 0;
+        if (this.paddle.origin.y < 0 - this.paddle.height / 2) {
+            this.paddle.origin.y = 0 - this.paddle.height / 2;
             return;
         }
-        if (this.paddle.origin.y >= canvas.height - this.paddle.height) {
-            this.paddle.origin.y = canvas.height - this.paddle.height;
+        if (this.paddle.origin.y > canvas.height - this.paddle.height / 2) {
+            this.paddle.origin.y = canvas.height - this.paddle.height / 2;
             return;
         }
         this.paddle.y = this.paddle.origin.y;
