@@ -59,8 +59,8 @@ export class HitParticle {
     }
 }
 
-export function hitParticles() {
-    for (let i = 0; i < 20; i++) {
+export function hitParticles(quantity) {
+    for (let i = 0; i < quantity; i++) {
         hitParticlesArr.push(new HitParticle());
     }
 }

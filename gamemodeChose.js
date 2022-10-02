@@ -50,23 +50,23 @@ function selectDifficulty(e) {
     let randomOffset = 0;
     switch (difficulty) {
         case 'Easy':
-            speed = 8;
+            speed = 17;
             refreshRate = 90;
             break;
         case 'Medium':
-            speed = 10;
+            speed = 14;
             refreshRate = 40;
             randomOffset = 3;
             break;
         case 'Hard':
-            speed = 16;
-            refreshRate = 25;
+            speed = 22;
+            refreshRate = 14;
             randomOffset = 5;
             break;
         case 'Imposible':
-            speed = 35;
-            refreshRate = 10;
-            randomOffset = 4;
+            speed = 45;
+            refreshRate = 8;
+            randomOffset = 3;
             break;
     }
     bot = new Bot();

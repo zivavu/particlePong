@@ -10,8 +10,8 @@ window.onresize = resizeCanvas;
 function resizeCanvas() {
     canvas.height = window.innerHeight;
     canvas.width = window.innerWidth;
-    player1.setPaddle(60);
-    player2.setPaddle(canvas.width - 80);
+    player1.setPaddleX(60);
+    player2.setPaddleX(canvas.width - 80);
 }
 class Ball {
     constructor() {
@@ -19,7 +19,7 @@ class Ball {
             x: canvas.width / 2,
             y: canvas.height / 2,
         };
-        this.diameter = 35;
+        this.diameter = 40;
         this.center = {
             x: this.position.x + this.diameter / 2,
             y: this.position.y + this.diameter / 2,
@@ -37,11 +37,12 @@ class Ball {
     }
 
     update() {
-        this.checkColision();
         this.center.y = this.position.y + this.diameter / 2;
         this.center.x = this.position.x + this.diameter;
         this.position.x += this.direction.x * this.velocity;
+        this.checkColision();
         this.position.y += this.direction.y * this.velocity;
+        trailParticlesArr.push(new TrailParticle());
     }
 
     checkColision() {
@@ -53,9 +54,9 @@ class Ball {
         ) {
             this.direction.x = 1;
             this.direction.y = (-(player1.paddle.y - this.center.y + player1.paddle.height / 2) * 1.6) / player1.paddle.height;
-            this.velocity = (this.velocity * player1.paddle.width) / (player1.paddle.defaultWidth * 4);
+            this.velocity = (this.velocity * player1.paddle.width) / (player1.paddle.defaultWidth * 3);
             if (this.velocity <= 20) this.velocity = 20;
-            hitParticles();
+            hitParticles(Math.round(((player1.paddle.width / 4) * ball.velocity) / 10));
         }
 
         if (
@@ -66,14 +67,18 @@ class Ball {
         ) {
             this.direction.x = -1;
             this.direction.y = (-(player2.paddle.y - this.center.y + player2.paddle.height / 2) * 1.6) / player2.paddle.height;
-            this.velocity = (this.velocity * player2.paddle.width) / (player2.paddle.defaultWidth * 4);
+            this.velocity = (this.velocity * player2.paddle.width) / (player2.paddle.defaultWidth * 3);
             if (this.velocity <= 20) this.velocity = 20;
-            hitParticles();
+            hitParticles(Math.round(((player2.paddle.width / 4) * ball.velocity) / 10));
         }
 
         if (this.position.y <= 0 || this.position.y + this.diameter >= canvas.height) {
+            if (Math.abs(this.direction.y) < 0.2) {
+                this.direction.y >= 0 ? (this.direction.y = 0.3) : (this.direction.y = -0.3);
+                this.position.y <= 0 ? (this.position.y = 15) : (this.position.y = canvas.height - this.diameter - 15);
+            }
             this.direction.y = -this.direction.y;
-            hitParticles();
+            hitParticles(Math.round(ball.velocity));
         }
     }
     checkWin() {
@@ -92,8 +97,8 @@ export let ball = new Ball();
 class Player {
     constructor() {
         this.paddle = {
-            width: 20,
-            defaultWidth: 20,
+            width: 30,
+            defaultWidth: 30,
             height: 200,
             speed: 25,
             bounceMultiplier: 1.1,
@@ -104,12 +109,15 @@ class Player {
         this.score = 0;
     }
 
-    setPaddle(paddlePosition) {
+    setPaddleX(paddlePosition) {
         this.paddle.x = paddlePosition;
         this.paddle.origin = {
             x: this.paddle.x,
             y: this.paddle.y,
         };
+    }
+    setDirection(direction) {
+        this.paddle.direction = direction;
     }
 
     setSteering(up, down, chargeButton) {
@@ -118,9 +126,6 @@ class Player {
             down: down,
             chargeButton: chargeButton,
         };
-    }
-    setDirection(direction) {
-        this.paddle.direction = direction;
     }
     movePaddle(direction) {
         this.paddle.origin.y += direction * this.paddle.speed;
@@ -150,7 +155,7 @@ class Player {
     }
     bounce() {
         if (this.paddle.charge == 0) return;
-        this.paddle.width = (this.paddle.width * this.paddle.charge) / 10;
+        this.paddle.width = (this.paddle.width * this.paddle.charge) / 12;
         if (this.paddle.width < this.paddle.defaultWidth) this.paddle.width = this.paddle.defaultWidth;
         this.paddle.charge = 0;
         this.paddle.x = this.paddle.origin.x;
@@ -174,12 +179,12 @@ export const player1 = new Player();
 export const player2 = new Player();
 export function gameInit() {
     player1.setSteering('w', 's', 'q');
-    player1.setPaddle(100);
+    player1.setPaddleX(100);
     player1.setDirection('right');
     if (steerWithMouse) document.addEventListener('mousemove', movePaddleByMouse);
 
     if (!bot) player2.setSteering('ArrowUp', 'ArrowDown', 'ArrowRight');
-    player2.setPaddle(canvas.width - 120);
+    player2.setPaddleX(canvas.width - 120);
     player2.setDirection('left');
     setInterval(gameFrame, gameTicks);
 }
@@ -193,7 +198,6 @@ function gameFrame() {
     checkPaddleMovement();
     ball.update();
     ball.checkWin();
-    trailParticlesArr.push(new TrailParticle());
     draw();
 }
 
