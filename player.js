@@ -9,7 +9,7 @@ export class Player {
             width: 30,
             defaultWidth: 30,
             height: 200,
-            speed: 35,
+            speed: 30,
             bounceMultiplier: 1.1,
             y: canvas.height / 2,
             charge: 0,

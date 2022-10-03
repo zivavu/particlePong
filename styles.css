@@ -73,7 +73,7 @@ button:hover {
     justify-self: end;
     box-shadow: 0 0 1.5vmin 0.6vmin rgb(61, 61, 61);
 }
-steer-with-mouse-label {
+#initial-screen label {
     color: white;
     font-size: 2.5vh;
     line-height: 6vh;
@@ -95,6 +95,7 @@ steer-with-mouse-label {
     padding: 3vh;
     border-radius: 3vmin;
     box-shadow: inset 0 0 1.2vmin 0.8vmin black;
+    justify-content: space-around;
 }
 .steering-info {
     font-size: 1.8vh;

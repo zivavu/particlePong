@@ -1,5 +1,5 @@
 import { Bot } from './bot.js';
-import { gameInit } from './pong.js';
+import { gameInit, player2 } from './pong.js';
 const singlePlayerButton = document.getElementById('1-player');
 const twoPlayersButton = document.getElementById('2-players');
 const initScreen = document.getElementById('initial-screen');
@@ -10,6 +10,7 @@ let imposible = document.createElement('button');
 const buttonsArr = [easy, medium, hard, imposible];
 const steerWithMouseCheckbox = document.createElement('input');
 const steeringInfoContainer = document.getElementById('steering-info-container');
+const player2steeringInfo = document.getElementById('player-2-info');
 
 singlePlayerButton.onclick = appendDifficultySelectButtons;
 twoPlayersButton.onclick = init2PlayersGame;
@@ -17,6 +18,7 @@ twoPlayersButton.onclick = init2PlayersGame;
 function appendDifficultySelectButtons() {
     singlePlayerButton.remove();
     twoPlayersButton.remove();
+    player2steeringInfo.remove();
     easy.innerText = 'Easy';
     easy.style.backgroundColor = 'green';
     medium.innerText = 'Medium';
