@@ -9,6 +9,7 @@ let hard = document.createElement('button');
 let imposible = document.createElement('button');
 const buttonsArr = [easy, medium, hard, imposible];
 const steerWithMouseCheckbox = document.createElement('input');
+const steeringInfoContainer = document.getElementById('steering-info-container');
 
 singlePlayerButton.onclick = appendDifficultySelectButtons;
 twoPlayersButton.onclick = init2PlayersGame;
@@ -34,6 +35,8 @@ function appendDifficultySelectButtons() {
     steerWithMouseCheckbox.checked = true;
     let steeringWithMouseLabel = document.createElement('label');
     steeringWithMouseLabel.innerText = 'Steer With Mouse';
+    steeringWithMouseLabel.id = 'steer-with-mouse-label';
+
     initScreen.appendChild(steerWithMouseCheckbox);
     initScreen.appendChild(steeringWithMouseLabel);
 }
@@ -56,10 +59,10 @@ function selectDifficulty(e) {
             maxCharge = 20;
             break;
         case 'Medium':
-            speed = 18;
-            refreshRate = 50;
+            speed = 21;
+            refreshRate = 30;
             bounceOffset = 40;
-            maxCharge = 30;
+            maxCharge = 38;
             break;
         case 'Hard':
             speed = 24;
@@ -77,12 +80,14 @@ function selectDifficulty(e) {
     bot = new Bot();
     bot.setParams(speed, refreshRate, bounceOffset, maxCharge);
     initScreen.style.visibility = 'hidden';
+    steeringInfoContainer.style.visibility = 'hidden';
     document.getElementById('score-display').style.visibility = 'visible';
 
     gameInit();
 }
 function init2PlayersGame() {
     initScreen.style.visibility = 'hidden';
+    steeringInfoContainer.style.visibility = 'hidden';
     document.getElementById('score-display').style.visibility = 'visible';
     gameInit();
 }

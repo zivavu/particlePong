@@ -15,7 +15,7 @@ export class Bot {
         this.checkIfCharge();
     }
     movePaddle() {
-        if (this.framesFromBounce < 10) {
+        if (this.framesFromBounce < 7) {
             this.framesFromBounce++;
             return;
         }
