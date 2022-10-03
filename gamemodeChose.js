@@ -31,13 +31,13 @@ function appendDifficultySelectButtons() {
     });
     steerWithMouseCheckbox.type = 'checkbox';
     steerWithMouseCheckbox.id = 'steer-with-mouse-checkbox';
-    steerWithMouseCheckbox.checked = false;
+    steerWithMouseCheckbox.checked = true;
     let steeringWithMouseLabel = document.createElement('label');
     steeringWithMouseLabel.innerText = 'Steer With Mouse';
     initScreen.appendChild(steerWithMouseCheckbox);
     initScreen.appendChild(steeringWithMouseLabel);
 }
-export let steerWithMouse = false;
+export let steerWithMouse = true;
 steerWithMouseCheckbox.addEventListener('change', steerWithMouseToggle);
 function steerWithMouseToggle(e) {
     steerWithMouse = e.target.checked;
@@ -58,19 +58,19 @@ function selectDifficulty(e) {
         case 'Medium':
             speed = 18;
             refreshRate = 50;
-            bounceOffset = 3;
+            bounceOffset = 40;
             maxCharge = 30;
             break;
         case 'Hard':
             speed = 24;
-            refreshRate = 20;
-            bounceOffset = 4;
-            maxCharge = 40;
+            refreshRate = 12;
+            bounceOffset = 50;
+            maxCharge = 44;
             break;
         case 'Imposible':
             speed = 40;
-            refreshRate = 4;
-            bounceOffset = 3;
+            refreshRate = 7;
+            bounceOffset = 70;
             maxCharge = 47;
             break;
     }

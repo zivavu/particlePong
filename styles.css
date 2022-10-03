@@ -39,7 +39,7 @@ html {
     position: absolute;
     width: 50vw;
     height: 35vh;
-    top: 35vh;
+    top: 40vh;
     left: 50%;
     transform: translateX(-50%);
     display: grid;

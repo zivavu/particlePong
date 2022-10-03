@@ -5,6 +5,7 @@ export class Bot {
         (this.speed = speed), (this.refreshRate = refreshRate), (this.bounceOffset = bounceOffset), (this.maxCharge = maxCharge);
         player2.paddle.speed = this.speed;
         player2.paddle.maxCharge = this.maxCharge;
+        this.framesFromBounce = 0;
         var me = this;
         this.interval = setInterval(() => me.locateBall(), me.refreshRate);
     }
@@ -14,7 +15,11 @@ export class Bot {
         this.checkIfCharge();
     }
     movePaddle() {
-        if (this.speed > 30 && this.speed < ball.velocity && ball.direction.x > 0) {
+        if (this.framesFromBounce < 10) {
+            this.framesFromBounce++;
+            return;
+        }
+        if (this.speed > 30) {
             player2.paddle.y = ball.center.y - player1.paddle.height / 2;
             this.checkIfCharge();
             return;
@@ -26,12 +31,11 @@ export class Bot {
         }
     }
     checkIfCharge() {
-        if (this.ballX < player2.paddle.x - player2.paddle.width - 15) this.addCharge = true;
+        if (this.ballX < player2.paddle.x - player2.paddle.width - 5) this.addCharge = true;
         else if (this.addCharge) {
+            this.framesFromBounce = 0;
             let offsetDirection = this.targetY >= player2.paddle.y + player2.paddle.height / 2 ? 1 : -1;
-            for (let i = 0; i <= this.bounceOffset; i++) {
-                player2.movePaddle(offsetDirection);
-            }
+            player2.paddle.y += offsetDirection * this.bounceOffset;
             this.addCharge = false;
         }
     }
