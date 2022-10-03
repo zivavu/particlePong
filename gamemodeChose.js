@@ -64,13 +64,13 @@ function selectDifficulty(e) {
         case 'Hard':
             speed = 24;
             refreshRate = 20;
-            bounceOffset = 6;
+            bounceOffset = 4;
             maxCharge = 40;
             break;
         case 'Imposible':
             speed = 40;
             refreshRate = 4;
-            bounceOffset = 4;
+            bounceOffset = 3;
             maxCharge = 47;
             break;
     }

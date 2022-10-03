@@ -50,21 +50,21 @@ html {
 }
 button {
     font-family: 'Rubik Mono One', sans-serif;
-    background-color: rgba(255, 255, 255, 0.534);
+    background-color: rgba(78, 78, 78, 0.534);
     border: none;
     height: 100%;
     width: 100%;
     color: rgb(255, 255, 255);
-    text-shadow: 0 0 0.3vmin white;
+    text-shadow: 0 0 0.2vmin white;
     font-size: 4vh;
     border-radius: 8vmin;
-    box-shadow: inset 0 0 1vmin 0.5vmin rgb(0, 0, 0);
+    box-shadow: inset 0 0 1vmin 0.5vmin rgb(0, 0, 0), 0 0 0.4vmin 0.2vmin white;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: rgba(255, 255, 255, 0.74);
-    box-shadow: inset 0 0 1vmin 0.5vmin rgb(0, 0, 0), 0 0 0.4vmin 0.2vmin white;
+    background-color: rgba(126, 126, 126, 0.74);
+    box-shadow: inset 0 0 1vmin 0.5vmin rgb(0, 0, 0), 0 0 0.6vmin 0.4vmin white;
 }
 #steer-with-mouse-checkbox {
     width: 5vh;

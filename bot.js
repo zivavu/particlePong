@@ -1,4 +1,5 @@
-import { ball, player1, player2 } from './pong.js';
+import { ball } from './ball.js';
+import { player1, player2 } from './pong.js';
 export class Bot {
     setParams(speed, refreshRate, bounceOffset, maxCharge) {
         (this.speed = speed), (this.refreshRate = refreshRate), (this.bounceOffset = bounceOffset), (this.maxCharge = maxCharge);
@@ -13,7 +14,7 @@ export class Bot {
         this.checkIfCharge();
     }
     movePaddle() {
-        if (this.speed > 30 && this.speed < ball.velocity && ball.direction.x < 0) {
+        if (this.speed > 30 && this.speed < ball.velocity && ball.direction.x > 0) {
             player2.paddle.y = ball.center.y - player1.paddle.height / 2;
             this.checkIfCharge();
             return;
@@ -28,7 +29,7 @@ export class Bot {
         if (this.ballX < player2.paddle.x - player2.paddle.width - 15) this.addCharge = true;
         else if (this.addCharge) {
             let offsetDirection = this.targetY >= player2.paddle.y + player2.paddle.height / 2 ? 1 : -1;
-            for (let i = 0; i < this.bounceOffset; i++) {
+            for (let i = 0; i <= this.bounceOffset; i++) {
                 player2.movePaddle(offsetDirection);
             }
             this.addCharge = false;

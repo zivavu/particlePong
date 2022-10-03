@@ -1,4 +1,4 @@
-import { ball } from './pong.js';
+import { ball } from './ball.js';
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
