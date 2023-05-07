@@ -8,7 +8,7 @@ export class Player {
         this.paddle = {
             width: 30,
             defaultWidth: 30,
-            height: 200,
+            height: 170,
             speed: 15,
             bounceMultiplier: 0.6,
             y: canvas.height / 2,

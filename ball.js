@@ -51,7 +51,7 @@ class Ball {
                 player1.paddle.height;
             this.velocity = (this.velocity * player1.paddle.width) / (player1.paddle.defaultWidth * 3);
             if (this.velocity <= 20) this.velocity = 20;
-            if (this.velocity > 35) this.velocity = 35;
+            if (this.velocity > 40) this.velocity = 40;
 
             hitParticles(Math.round(((player1.paddle.width / 4) * ball.velocity) / 10));
         }
@@ -68,7 +68,7 @@ class Ball {
                 player2.paddle.height;
             this.velocity = (this.velocity * player2.paddle.width) / (player2.paddle.defaultWidth * 3);
             if (this.velocity <= 20) this.velocity = 20;
-            if (this.velocity > 35) this.velocity = 35;
+            if (this.velocity > 40) this.velocity = 40;
             hitParticles(Math.round(((player2.paddle.width / 4) * ball.velocity) / 10));
         }
         if (this.position.y <= 0 || this.position.y + this.diameter >= canvas.height) {

@@ -56,19 +56,19 @@ function selectDifficulty(e) {
     let maxCharge = 0;
     switch (difficulty) {
         case 'Easy':
-            speed = 17;
+            speed = 8;
             refreshRate = 90;
             maxCharge = 20;
             break;
         case 'Medium':
-            speed = 21;
-            refreshRate = 30;
+            speed = 12;
+            refreshRate = 20;
             bounceOffset = 40;
             maxCharge = 38;
             break;
         case 'Hard':
-            speed = 24;
-            refreshRate = 12;
+            speed = 15;
+            refreshRate = 15;
             bounceOffset = 50;
             maxCharge = 44;
             break;
