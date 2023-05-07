@@ -9,8 +9,8 @@ export class Player {
             width: 30,
             defaultWidth: 30,
             height: 200,
-            speed: 30,
-            bounceMultiplier: 1.1,
+            speed: 15,
+            bounceMultiplier: 0.6,
             y: canvas.height / 2,
             charge: 0,
             maxCharge: 50,
@@ -64,7 +64,7 @@ export class Player {
     }
     bounce() {
         if (this.paddle.charge == 0) return;
-        this.paddle.width = (this.paddle.width * this.paddle.charge) / 12;
+        this.paddle.width = (this.paddle.width * this.paddle.charge) / 14;
         if (this.paddle.width < this.paddle.defaultWidth) this.paddle.width = this.paddle.defaultWidth;
         this.paddle.charge = 0;
         this.paddle.x = this.paddle.origin.x;

@@ -1,5 +1,5 @@
 import { Bot } from './bot.js';
-import { gameInit, player2 } from './pong.js';
+import { gameInit } from './pong.js';
 const singlePlayerButton = document.getElementById('1-player');
 const twoPlayersButton = document.getElementById('2-players');
 const initScreen = document.getElementById('initial-screen');
@@ -84,10 +84,10 @@ function selectDifficulty(e) {
     initScreen.style.visibility = 'hidden';
     steeringInfoContainer.style.visibility = 'hidden';
     document.getElementById('score-display').style.visibility = 'visible';
-
     gameInit();
 }
 function init2PlayersGame() {
+    steerWithMouse = false;
     initScreen.style.visibility = 'hidden';
     steeringInfoContainer.style.visibility = 'hidden';
     document.getElementById('score-display').style.visibility = 'visible';

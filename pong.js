@@ -1,7 +1,7 @@
 import { ball } from './ball.js';
 import { bot, steerWithMouse } from './gamemodeChose.js';
 import { particleHandler } from './particles.js';
-import { movePaddleByMouse, Player } from './player.js';
+import { Player, movePaddleByMouse } from './player.js';
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -13,19 +13,19 @@ function resizeCanvas() {
     player1.setPaddleX(60);
     player2.setPaddleX(canvas.width - 80);
 }
-const gameTicks = 1000 / 60;
+
 export const player1 = new Player();
 export const player2 = new Player();
 export function gameInit() {
-    player1.setSteering('w', 's', 'q');
+    player1.setSteering('w', 's', 'r');
     player1.setPaddleX(100);
     player1.setDirection('right');
     if (steerWithMouse) document.addEventListener('mousemove', movePaddleByMouse);
 
-    if (!bot) player2.setSteering('ArrowUp', 'ArrowDown', 'ArrowRight');
+    if (!bot) player2.setSteering('o', 'l', '[');
     player2.setPaddleX(canvas.width - 120);
     player2.setDirection('left');
-    setInterval(gameFrame, gameTicks);
+    window.requestAnimationFrame(gameFrame);
 }
 
 //paddlesMovement
@@ -38,6 +38,7 @@ function gameFrame() {
     ball.update();
     ball.checkWin();
     draw();
+    window.requestAnimationFrame(gameFrame);
 }
 
 function checkPaddleMovement() {
